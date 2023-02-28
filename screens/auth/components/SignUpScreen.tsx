@@ -1,6 +1,6 @@
 import { View, Image, StyleSheet } from 'react-native'
 import React from 'react'
-import { logo } from '../../../utils/constants'
+import { logo } from '../../../utils/Constants'
 import SignUpForm from './SignUpForm'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../../Navigation'

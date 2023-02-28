@@ -1,16 +1,23 @@
 import { View, Text, TextInput, StyleSheet, Pressable, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Formik } from 'formik'
 import Validator from 'email-validator'
 import { loginFormSchema, loginInitValues } from '../FormikHelper'
 import { LoginScreenProps } from './LoginScreen'
+import { login } from '../../../services/AuthService'
 
 const LoginForm = ({ navigation, route }: LoginScreenProps) => {
+  const formikRef = useRef<any>()
+  const submitForm = () => {
+    formikRef?.current?.submitForm()
+  }
+
   return (
     <View style={styles.wrapper}>
       <Formik
+        innerRef={formikRef}
         initialValues={loginInitValues}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={({ email, password }) => login({ email, password, navigation })}
         validationSchema={loginFormSchema}
         validateOnMount
       >
@@ -66,7 +73,7 @@ const LoginForm = ({ navigation, route }: LoginScreenProps) => {
 
             <Pressable
               style={[styles.button, { backgroundColor: isValid ? '#0096F6' : '#9ACAF7' }]}
-              onPress={(e) => handleSubmit}
+              onPress={submitForm}
               disabled={!isValid}
             >
               <Text style={styles.buttonText}>Log In</Text>

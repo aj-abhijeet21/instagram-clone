@@ -1,5 +1,9 @@
 import * as Yup from 'yup'
 
+export type LoginValues = {
+  email: string
+  password: string
+}
 export const loginFormSchema = Yup.object().shape({
   email: Yup.string().email().required('Email is required'),
   password: Yup.string()
@@ -7,7 +11,13 @@ export const loginFormSchema = Yup.object().shape({
     .min(8, 'Password must have at least 8 characters'),
 })
 
-export const loginInitValues = { email: '', password: '' }
+export const loginInitValues: LoginValues = { email: '', password: '' }
+
+export type SignUpValues = {
+  email: string
+  password: string
+  username: string
+}
 
 export const signUpFormSchema = Yup.object().shape({
   email: Yup.string().email().required('Email is required'),
@@ -17,4 +27,4 @@ export const signUpFormSchema = Yup.object().shape({
     .min(8, 'Password must have at least 8 characters'),
 })
 
-export const signUpInitValues = { email: '', password: '', username: '' }
+export const signUpInitValues: SignUpValues = { email: '', password: '', username: '' }

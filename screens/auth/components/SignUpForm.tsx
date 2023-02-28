@@ -1,16 +1,26 @@
 import { View, Text, Pressable, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Formik } from 'formik'
 import { signUpFormSchema, signUpInitValues } from '../FormikHelper'
 import Validator from 'email-validator'
 import { SignUpScreenProps } from './SignUpScreen'
+import { signUp } from '../../../services/AuthService'
 
 const SignUpForm = ({ navigation, route }: SignUpScreenProps) => {
+  const formikRef = useRef<any>()
+
+  const submitForm = () => {
+    formikRef?.current?.submitForm()
+  }
+
   return (
     <View style={styles.wrapper}>
       <Formik
+        innerRef={formikRef}
         initialValues={signUpInitValues}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={({ email, password, username }) =>
+          signUp({ email, password, username, navigation })
+        }
         validationSchema={signUpFormSchema}
         validateOnMount
       >
@@ -84,7 +94,7 @@ const SignUpForm = ({ navigation, route }: SignUpScreenProps) => {
                 styles.button,
                 { backgroundColor: isValid ? '#0096F6' : '#9ACAF7', marginTop: 30 },
               ]}
-              onPress={(e) => handleSubmit}
+              onPress={submitForm}
               disabled={!isValid}
             >
               <Text style={styles.buttonText}>Sign Up</Text>
