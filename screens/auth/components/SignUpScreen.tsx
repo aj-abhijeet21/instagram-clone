@@ -1,16 +1,19 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
 import React from 'react'
-import LoginForm from './LoginForm'
 import { logo } from '../../../utils/constants'
 import SignUpForm from './SignUpForm'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../../Navigation'
 
-const SignUpScreen = () => {
+export type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUpScreen'>
+
+const SignUpScreen = ({ navigation, route }: SignUpScreenProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image source={{ uri: logo, height: 100, width: 100 }} />
       </View>
-      <SignUpForm />
+      <SignUpForm navigation={navigation} route={route} />
     </View>
   )
 }

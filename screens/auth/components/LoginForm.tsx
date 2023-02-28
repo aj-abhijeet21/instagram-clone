@@ -1,21 +1,11 @@
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  ImageStyle,
-  TextStyle,
-  ViewStyle,
-} from 'react-native'
+import { View, Text, TextInput, StyleSheet, Pressable, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Formik } from 'formik'
 import Validator from 'email-validator'
 import { loginFormSchema, loginInitValues } from '../FormikHelper'
+import { LoginScreenProps } from './LoginScreen'
 
-const LoginForm = () => {
+const LoginForm = ({ navigation, route }: LoginScreenProps) => {
   return (
     <View style={styles.wrapper}>
       <Formik
@@ -84,7 +74,7 @@ const LoginForm = () => {
 
             <View style={styles.signUpContainer}>
               <Text>Don't have an account?</Text>
-              <TouchableOpacity onPress={() => console.log('Login Pressed!')}>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
                 <Text style={styles.signUpText}> Sign Up</Text>
               </TouchableOpacity>
             </View>
