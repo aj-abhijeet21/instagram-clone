@@ -1,10 +1,18 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import LoginScreen from './components/LoginScreen'
-import SignUpScreen from './components/SignUpScreen'
+import React, { useEffect, useState } from 'react'
+import { SignedInStack, SignedOutStack } from '../../Navigation'
+import { auth } from '../../utils/FirebaseConfig'
+import { User } from 'firebase/auth'
 
 const AuthWrapper = () => {
-  return <SignUpScreen />
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
+
+  const userHandler = (user: User | null) => {
+    user ? setCurrentUser(user) : setCurrentUser(null)
+  }
+
+  useEffect(() => auth.onAuthStateChanged((user) => userHandler(user)), [])
+
+  return <>{currentUser ? <SignedInStack /> : <SignedOutStack />}</>
 }
 
 export default AuthWrapper

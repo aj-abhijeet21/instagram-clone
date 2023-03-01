@@ -1,5 +1,5 @@
-import { SignedOutStack } from './Navigation'
+import AuthWrapper from './screens/auth/AuthWrapper'
 
 export default function App() {
-  return <SignedOutStack />
+  return <AuthWrapper />
 }
