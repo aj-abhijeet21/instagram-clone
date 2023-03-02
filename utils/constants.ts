@@ -12,6 +12,8 @@ export const messageIcon = {
   uri: 'https://img.icons8.com/fluency-systems-regular/60/ffffff/facebook-messenger.png',
 }
 
+export const PlaceholderImage = require('./../assets/placeholder.jpg')
+
 export const BottomNavIcons: BottomNavIconType[] = [
   {
     name: 'Home',
