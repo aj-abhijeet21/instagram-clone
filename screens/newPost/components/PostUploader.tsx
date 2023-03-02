@@ -4,17 +4,7 @@ import * as ImagePicker from 'expo-image-picker'
 import ImageViewer from './ImageViewer'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { auth, db, storage } from '../../../utils/FirebaseConfig'
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore'
+import { addDoc, collection, doc, getDocs, limit, query, where } from 'firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 
 type User = {
@@ -34,7 +24,6 @@ const PostUploader = () => {
   }, [])
 
   const getUserName = async () => {
-    console.log('inside')
     const user = auth.currentUser
     const userRef = collection(db, 'users')
     const q = query(userRef, where('uid', '==', user?.uid), limit(1))
@@ -69,9 +58,9 @@ const PostUploader = () => {
           user: currentLoggedInUser?.username,
           profile_picture: currentLoggedInUser?.profilePicture,
           owner_uid: auth.currentUser?.uid,
+          owner_email: auth.currentUser?.email,
           caption: caption,
           createdAt: new Date(),
-          likes: 0,
           likes_by_user: [],
           comments: [],
         })

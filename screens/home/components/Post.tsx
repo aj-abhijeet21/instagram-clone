@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Divider } from 'react-native-elements'
 import { PostType } from '../../../utils/Types'
-import BottomNavBar from './BottomNavBar'
+import { auth, db } from '../../../utils/FirebaseConfig'
+import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 
 const Post = ({ post }: { post: PostType }) => {
   return (
@@ -25,7 +26,7 @@ const PostHeader = ({ post }: { post: PostType }) => {
   return (
     <View style={styles.spaceBetweenContainer}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Image style={styles.postHeaderImage} source={{ uri: post.imageUrl }} />
+        <Image style={styles.postHeaderImage} source={{ uri: post.profile_picture }} />
         <Text style={styles.postHeaderText}> {post.user}</Text>
       </View>
       <Text style={{ color: 'white', fontWeight: '900' }}>...</Text>
@@ -42,11 +43,32 @@ const PostImage = ({ post }: { post: PostType }) => {
 }
 
 const PostFooter = ({ post }: { post: PostType }) => {
+  const [currentLikeStatus, setCurrentLikeStatus] = useState(
+    post.likes_by_user.includes(auth.currentUser?.email!)
+  )
+  const handleLike = (post: PostType) => {
+    const postRef = doc(db, 'posts', post.id)
+    updateDoc(postRef, {
+      likes_by_user: !currentLikeStatus
+        ? arrayUnion(auth.currentUser?.email)
+        : arrayRemove(auth.currentUser?.email),
+    }).then(() => {
+      setCurrentLikeStatus(!currentLikeStatus)
+    })
+  }
+
   return (
     <View style={styles.spaceBetweenContainer}>
       <View style={styles.iconsContainer}>
-        <TouchableOpacity>
-          <Image style={styles.postFooterIcon} source={require('../../../assets/heart.png')} />
+        <TouchableOpacity onPress={() => handleLike(post)}>
+          <Image
+            style={styles.postFooterIcon}
+            source={
+              currentLikeStatus
+                ? require('../../../assets/heart-filled.png')
+                : require('../../../assets/heart.png')
+            }
+          />
         </TouchableOpacity>
         <TouchableOpacity>
           <Image style={styles.postFooterIcon} source={require('../../../assets/comment.png')} />
@@ -60,7 +82,10 @@ const PostFooter = ({ post }: { post: PostType }) => {
       </View>
       <View>
         <TouchableOpacity>
-          <Image style={styles.postFooterIcon} source={require('../../../assets/save.png')} />
+          <Image
+            style={[styles.postFooterIcon, { marginRight: 0 }]}
+            source={require('../../../assets/save.png')}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -68,10 +93,11 @@ const PostFooter = ({ post }: { post: PostType }) => {
 }
 
 const Likes = ({ post }: { post: PostType }) => {
+  console.log(post.likes_by_user, post.id)
   return (
     <View style={{ flexDirection: 'row', marginTop: 4 }}>
       <Text style={{ color: 'white', fontWeight: '600' }}>
-        {post.likes.toLocaleString('en')} likes
+        {post.likes_by_user.length.toLocaleString('en')} likes
       </Text>
     </View>
   )
