@@ -10,7 +10,7 @@ const Stories = () => {
           <View key={index} style={styles.storyContainer}>
             <Image style={styles.storyImage} source={{ uri: user.image }} />
             <Text style={{ color: 'white' }}>
-              {user.name.length > 11 ? user.name.slice(0, 10) + '...' : user.name}
+              {user.name.length > 11 ? user.name.slice(0, 8) + '...' : user.name}
             </Text>
           </View>
         ))}
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   storyContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 18,
   },
 })
 
