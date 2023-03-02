@@ -14,14 +14,14 @@ export type HomeWrapperProps = NativeStackScreenProps<RootStackParamList, 'HomeS
 const HomeWrapper = (props: HomeWrapperProps) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header navigation={props.navigation} route={props.route} />
       <Stories />
       <ScrollView>
         {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
       </ScrollView>
-      <BottomNavBar icons={BottomNavIcons} />
+      <BottomNavBar icons={BottomNavIcons} navigator={props} />
     </SafeAreaView>
   )
 }

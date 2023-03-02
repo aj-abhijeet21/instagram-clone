@@ -1,15 +1,30 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { BottomNavIconType } from '../../../utils/Types'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Divider } from 'react-native-elements'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../../Navigation'
 
-const BottomNavBar = ({ icons }: { icons: BottomNavIconType[] }) => {
+const BottomNavBar = ({
+  icons,
+  navigator,
+}: {
+  icons: BottomNavIconType[]
+  navigator: NativeStackScreenProps<RootStackParamList, 'HomeScreen'>
+}) => {
   const [activeTab, setActiveTab] = useState('Home')
 
   const Icon = ({ icon }: { icon: BottomNavIconType }) => {
     return (
-      <TouchableOpacity onPress={() => setActiveTab(icon.name)}>
+      <TouchableOpacity
+        onPress={() => {
+          setActiveTab(icon.name)
+          if (icon.name === 'Add') {
+            navigator.navigation.navigate('NewPostScreen')
+          }
+        }}
+      >
         <Image
           style={[styles.icon, icon.name === 'Profile' ? styles.profilePic : null]}
           source={activeTab === icon.name ? icon.active : icon.inActive}

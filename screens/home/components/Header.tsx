@@ -2,8 +2,9 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { addIcon, likeIcon, messageIcon } from '../../../utils/Constants'
+import { HomeWrapperProps } from '../HomeWrapper'
 
-const Header = () => {
+const Header = (props: HomeWrapperProps) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity>
@@ -11,7 +12,11 @@ const Header = () => {
       </TouchableOpacity>
 
       <View style={styles.iconsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('NewPostScreen')
+          }}
+        >
           <Image style={styles.icon} source={addIcon} />
         </TouchableOpacity>
         <TouchableOpacity>
