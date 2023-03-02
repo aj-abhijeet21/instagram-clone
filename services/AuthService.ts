@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { Alert } from 'react-native'
 import { RootStackParamList } from '../Navigation'
 import { auth, db } from '../utils/FirebaseConfig'
-import { collection, addDoc } from 'firebase/firestore'
+import { setDoc, doc } from 'firebase/firestore'
 export const login = async ({
   email,
   password,
@@ -47,7 +47,7 @@ export const signUp = async ({
 }) => {
   try {
     const user = await createUserWithEmailAndPassword(auth, email, password)
-    const userRef = await addDoc(collection(db, 'users'), {
+    const userRef = await setDoc(doc(db, 'users', auth.currentUser!.email!), {
       uid: user.user.uid,
       username: username,
       email: user.user.email,

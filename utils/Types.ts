@@ -1,10 +1,12 @@
 import { ImageSourcePropType } from 'react-native'
 
 export type PostType = {
+  id: string
   imageUrl: string
+  profile_picture: string
   user: string
   profilePic: string
-  likes: number
+  likes_by_user: string[]
   caption: string
   comments: Comment[]
 }
