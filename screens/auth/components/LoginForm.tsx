@@ -49,7 +49,7 @@ const LoginForm = ({ navigation, route }: LoginScreenProps) => {
                 styles.inputField,
                 {
                   borderColor:
-                    values.password.length < 1 || values.password.length >= 8 ? '#ccc' : 'red',
+                    values.password.length < 1 || values.password.length >= 6 ? '#ccc' : 'red',
                 },
               ]}
             >
