@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Divider } from 'react-native-elements'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../../Navigation'
+import { auth } from '../../../utils/FirebaseConfig'
 
 const BottomNavBar = ({
   icons,
@@ -22,6 +23,8 @@ const BottomNavBar = ({
           setActiveTab(icon.name)
           if (icon.name === 'Add') {
             navigator.navigation.navigate('NewPostScreen')
+          } else if (icon.name === 'Logout') {
+            auth.signOut()
           }
         }}
       >

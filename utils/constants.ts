@@ -12,6 +12,8 @@ export const messageIcon = {
   uri: 'https://img.icons8.com/fluency-systems-regular/60/ffffff/facebook-messenger.png',
 }
 
+export const logoutIcon = require('../assets/logout.png')
+
 export const PlaceholderImage = require('./../assets/placeholder.jpg')
 
 export const BottomNavIcons: BottomNavIconType[] = [
@@ -36,8 +38,8 @@ export const BottomNavIcons: BottomNavIconType[] = [
     active: require('../assets/reels-filled.png'),
   },
   {
-    name: 'Profile',
-    inActive: require('../assets/user-filled.png'),
-    active: require('../assets/user-filled.png'),
+    name: 'Logout',
+    inActive: require('../assets/logout.png'),
+    active: require('../assets/logout.png'),
   },
 ]
