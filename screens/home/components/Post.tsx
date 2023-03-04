@@ -1,9 +1,18 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { Divider } from 'react-native-elements'
 import { PostType } from '../../../utils/Types'
 import { auth, db } from '../../../utils/FirebaseConfig'
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import {
+  arrayUnion,
+  arrayRemove,
+  collectionGroup,
+  query,
+  getDocs,
+  setDoc,
+} from 'firebase/firestore'
+import { Pressable } from 'react-native'
+import { getUser } from '../../../services/PostService'
 
 const Post = ({ post }: { post: PostType }) => {
   return (
@@ -16,7 +25,6 @@ const Post = ({ post }: { post: PostType }) => {
         <Likes post={post} />
         <Caption post={post} />
         <CommentSection post={post} />
-        <Comments post={post} />
       </View>
     </View>
   )
@@ -47,14 +55,28 @@ const PostFooter = ({ post }: { post: PostType }) => {
     post.likes_by_user.includes(auth.currentUser?.email!)
   )
   const handleLike = (post: PostType) => {
-    const postRef = doc(db, 'posts', post.id)
-    updateDoc(postRef, {
-      likes_by_user: !currentLikeStatus
-        ? arrayUnion(auth.currentUser?.email)
-        : arrayRemove(auth.currentUser?.email),
-    }).then(() => {
-      setCurrentLikeStatus(!currentLikeStatus)
-    })
+    const docRef = query(collectionGroup(db, 'posts'))
+    getDocs(docRef)
+      .then((docs) => {
+        docs.docs.forEach((doc) => {
+          if (doc.id === post.id) {
+            setDoc(
+              doc.ref,
+              {
+                likes_by_user: !currentLikeStatus
+                  ? arrayUnion(auth.currentUser?.email)
+                  : arrayRemove(auth.currentUser?.email),
+              },
+              { merge: true }
+            )
+              .then((result) => {
+                setCurrentLikeStatus(!currentLikeStatus)
+              })
+              .catch((err) => console.log('Err', err))
+          }
+        })
+      })
+      .catch((err) => console.log(err))
   }
 
   return (
@@ -93,7 +115,6 @@ const PostFooter = ({ post }: { post: PostType }) => {
 }
 
 const Likes = ({ post }: { post: PostType }) => {
-  console.log(post.likes_by_user, post.id)
   return (
     <View style={{ flexDirection: 'row', marginTop: 4 }}>
       <Text style={{ color: 'white', fontWeight: '600' }}>
@@ -116,13 +137,71 @@ const Caption = ({ post }: { post: PostType }) => {
 
 const CommentSection = ({ post }: { post: PostType }) => {
   let totalComments = post.comments.length
+  const [showAllComments, setShowAllComments] = useState(false)
+  const [comment, setComment] = useState('')
+  async function handleAddComment() {
+    if (comment !== '') {
+      const docRef = query(collectionGroup(db, 'posts'))
+      const username = await getUser()
+      getDocs(docRef)
+        .then((docs) => {
+          docs.docs.forEach((doc) => {
+            if (doc.id === post.id) {
+              setDoc(
+                doc.ref,
+                {
+                  comments: arrayUnion({
+                    user: username,
+                    comment: comment,
+                  }),
+                },
+                { merge: true }
+              )
+                .then((result) => {
+                  setComment('')
+                })
+                .catch((err) => console.log('Err', err))
+            }
+          })
+        })
+        .catch((err) => console.log(err))
+    }
+  }
+
   return (
     <View style={{ marginTop: 5 }}>
       {!!totalComments && (
-        <Text style={{ color: 'gray' }}>
-          View {totalComments > 1 ? `all ${totalComments} comments` : `${totalComments} comment`}
-        </Text>
+        <TouchableOpacity onPress={() => setShowAllComments(!showAllComments)}>
+          {!showAllComments ? (
+            <Text style={{ color: 'gray' }}>
+              View
+              {totalComments > 1 ? ` all ${totalComments} comments` : `${totalComments} comment`}
+            </Text>
+          ) : (
+            <Text style={{ color: 'gray' }}>
+              Hide
+              {totalComments > 1 ? ` all ${totalComments} comments` : `${totalComments} comment`}
+            </Text>
+          )}
+        </TouchableOpacity>
       )}
+
+      {showAllComments && <Comments post={post} />}
+
+      <View style={styles.addCommentContainer}>
+        <TextInput
+          style={styles.inputField}
+          placeholderTextColor='#444'
+          placeholder='Add a comment...'
+          autoCapitalize='none'
+          autoCorrect={false}
+          onChangeText={(text) => setComment(text)}
+          value={comment}
+        />
+        <Pressable style={styles.addCommentButton} onPress={handleAddComment}>
+          <Text style={styles.buttonText}>Post</Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -195,6 +274,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '32%',
     justifyContent: 'space-between',
+  },
+  addCommentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  // commentContainer: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  // },
+  inputField: {
+    borderRadius: 4,
+    padding: 12,
+    backgroundColor: '#30302f',
+    marginBottom: 10,
+    borderWidth: 1,
+    width: '85%',
+  },
+  addCommentButton: {
+    flex: 1,
+    backgroundColor: '#0096F6',
+    color: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxHeight: 40,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
   },
 })
 export default Post
