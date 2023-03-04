@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker'
 import ImageViewer from './ImageViewer'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { auth, db, storage } from '../../../utils/FirebaseConfig'
-import { addDoc, collection, doc, getDocs, limit, query, where } from 'firebase/firestore'
+import { addDoc, collection, getDocs, limit, query, where } from 'firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 
 type User = {
@@ -51,8 +51,6 @@ const PostUploader = () => {
         const task = await uploadBytesResumable(imagesRef, blob)
         const url = await getDownloadURL(ref(storage, task.ref.fullPath))
         const userRef = collection(db, `users/${currentLoggedInUser?.collectionId}/posts`)
-        const getDoc = doc(userRef, auth.currentUser?.uid)
-
         const result = await addDoc(userRef, {
           imageUrl: url,
           user: currentLoggedInUser?.username,
@@ -66,6 +64,7 @@ const PostUploader = () => {
         })
 
         navigator.goBack()
+        setSelectedImage(undefined)
       } catch (err) {
         Alert.alert('Upload Failed')
       }
