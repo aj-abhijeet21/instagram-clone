@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import PostUploader from './PostUploader'
-import { NewPostWrapperProps } from '../NewPostWrapper'
+import { useNavigation } from '@react-navigation/native'
 
 const AddNewPost = () => {
   return (
@@ -14,9 +14,11 @@ const AddNewPost = () => {
 }
 
 const Header = () => {
+  const navigator = useNavigation()
+
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigator.goBack()}>
         <Image style={styles.icon} source={require('../../../assets/back.png')} />
       </TouchableOpacity>
       <Text style={styles.headerText}>New Post</Text>
